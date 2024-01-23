@@ -1,10 +1,13 @@
 const qrcode = require('qrcode-terminal');
 
-const { Client } = require('whatsapp-web.js');
+const { Client, LocalAuth } = require('whatsapp-web.js');
 const client = new Client({
   puppeteer: {
     args: ['--no-sandbox'],
-  }
+  },
+  authStrategy: new LocalAuth({
+    dataPath: '/var/whatsapp'
+  })
 });
 
 client.on('qr', (qr) => {
@@ -14,6 +17,11 @@ client.on('qr', (qr) => {
 client.on('ready', () => {
     console.log('Client is ready!');
 });
+
+client.on('message', (message) => {
+  console.log(message);
+});
+
 
 client.initialize();
 

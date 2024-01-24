@@ -1,7 +1,7 @@
+const {Client, LocalAuth} = require('whatsapp-web.js');
 const qrcode = require('qrcode-terminal');
 
-const {Client, LocalAuth} = require('whatsapp-web.js');
-const {registerForTonight, usersForTonight, unregisterUser} = require('./db');
+const {setup, registerForTonight, usersForTonight, unregisterUser} = require('./db');
 
 const client = new Client({
   puppeteer: {
@@ -32,7 +32,7 @@ const handleMessage = async (message) => {
 
   if (message.body === '!nottonight') {
     await unregisterUser(user.id.user);
-    await message.reply(`you are unregistered for tonight`);
+    await message.reply(`You are unregistered for tonight`);
   }
 
   if (message.body === '!whosin') {
@@ -40,7 +40,7 @@ const handleMessage = async (message) => {
     if (users.length === 0) {
       await message.reply(`Nobody's in for tonight yet`);
     } else {
-      const usersForTonight = users.map((u) => `@${u.id.user}`).join(', ');
+      const usersForTonight = users.map((userId) => `@${userId}`).join(', ');
       await message.reply(`In for tonight: ${usersForTonight}`);
     }
   }
@@ -48,6 +48,6 @@ const handleMessage = async (message) => {
 client.on('message', handleMessage);
 client.on('message_create', handleMessage);
 
-
+setup();
 client.initialize();
 

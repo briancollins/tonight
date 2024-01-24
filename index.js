@@ -54,10 +54,9 @@ const handleMessage = async (message) => {
   if (match !== null) {
     inputs.push({
       role: 'user',
-      content: `${user.name}: ${message.content}`
+      content: `${user.shortName || user.name || 'no name'}: ${match[1]}`
     });
 
-    inputs.push({user: user.name, content: match[1]});
     const completion = await gpt(inputs);
     inputs.push({role: 'assistant', content: completion});
     while (inputs.length > 20) {

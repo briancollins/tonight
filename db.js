@@ -35,7 +35,7 @@ async function registerForTonight(userId) {
   try {
     const existingUser = await db.get(`SELECT COUNT(*) AS count FROM registrations WHERE date = ? AND user_id = ?`, [today, userId]);
 
-    if (!existingUser) {
+    if (existingUser.count === 0) {
       await db.run(`INSERT INTO registrations (date, user_id) VALUES (?, ?)`, [today, userId]);
     }
 

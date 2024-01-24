@@ -48,7 +48,6 @@ const handleMessage = async (message) => {
     }
   }
 };
-client.on('message', handleMessage);
 client.on('message_create', handleMessage);
 
 setup();

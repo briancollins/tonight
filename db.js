@@ -30,15 +30,27 @@ function dateToday() {
 
 async function registerForTonight(userId) {
   const today = dateToday();
-  const existingUser = await db.get(`SELECT COUNT(*) AS count FROM registrations WHERE date = ? AND user_id = ?`, [today, userId]);
+  try {
+    await db.run('BEGIN TRANSACTION');
 
-  if (existingUser.count === 0) {
-    await db.run(`INSERT INTO registrations (date, user_id) VALUES (?, ?)`, [today, userId]);
+    try {
+      const existingUser = await db.get(`SELECT COUNT(*) AS count FROM registrations WHERE date = ? AND user_id = ?`, [today, userId]);
+
+      if (existingUser.count === 0) {
+        await db.run(`INSERT INTO registrations (date, user_id) VALUES (?, ?)`, [today, userId]);
+      }
+
+      const result = await db.get(`SELECT COUNT(*) AS count FROM registrations WHERE date = ?`, today);
+
+      await db.run('COMMIT');
+      return result.count;
+    } catch (error) {
+      await db.run('ROLLBACK');
+    }
+
+  } catch (error) {
+    console.log(error);
   }
-
-  const result = await db.get(`SELECT COUNT(*) AS count FROM registrations WHERE date = ?`, today);
-
-  return result.count;
 }
 
 async function usersForTonight() {

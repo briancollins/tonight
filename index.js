@@ -21,6 +21,7 @@ client.on('ready', () => {
     console.log('Client is ready!');
 });
 
+const inputs = [];
 const handleMessage = async (message) => {
   const user = await message.getContact();
 
@@ -51,11 +52,22 @@ const handleMessage = async (message) => {
 
   const match = message.body.match(/^!gpt (.*)/);
   if (match !== null) {
-    await message.reply(await gpt(match[1]));
+    inputs.push({
+      role: 'user',
+      content: `${user.name}: ${message.content}`
+    });
+
+    inputs.push({user: user.name, content: match[1]});
+    const completion = await gpt(inputs);
+    inputs.push({role: 'assistant', content: completion});
+    while (inputs.length > 20) {
+      inputs.shift();
+    }
+
+    await message.reply(completion);
   }
 };
 client.on('message_create', handleMessage);
 
 setup();
 client.initialize();
-

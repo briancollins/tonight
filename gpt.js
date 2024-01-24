@@ -5,7 +5,7 @@ exports.gpt = async (inputs) => {
 
   const messages = [{ role: "system", content: process.env.GPT_PROMPT }];
 
-  for (message in inputs) {
+  for (message of inputs) {
     messages.push(message);
   }
 

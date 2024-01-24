@@ -8,6 +8,7 @@ exports.gpt = async (inputs) => {
   for (message of inputs) {
     messages.push(message);
   }
+  console.log(messages);
 
   const completion = await openai.chat.completions.create({
     messages,

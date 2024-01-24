@@ -40,8 +40,11 @@ const handleMessage = async (message) => {
     if (users.length === 0) {
       await message.reply(`Nobody's in for tonight yet`);
     } else {
-      const usersForTonight = users.map((userId) => `@${userId}`).join(', ');
-      await message.reply(`In for tonight: ${usersForTonight}`);
+      const mentions = users.map((userId) => `${userId}@c.us`);
+      const usersForTonight = users.map((userId) => `@${userId}`).join('\n');
+      console.log(usersForTonight);
+      const chat = await message.getChat();
+      await chat.sendMessage(`In for tonight:\n\n${usersForTonight}`, {mentions});
     }
   }
 };
